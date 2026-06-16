@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LanguageProvider, useLanguage } from './src/i18n/LanguageContext';
 import HomeScreen from './src/screens/HomeScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
+import JournalScreen from './src/screens/JournalScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import { colors } from './src/theme/colors';
 
@@ -38,6 +39,14 @@ function TabNavigator() {
         options={{
           tabBarLabel: t('tabHome'),
           tabBarIcon: ({ focused }) => <TabIcon label="🏠" focused={focused} />,
+        }}
+      />
+      <Tab.Screen
+        name="Journal"
+        component={JournalScreen}
+        options={{
+          tabBarLabel: t('tabJournal'),
+          tabBarIcon: ({ focused }) => <TabIcon label="📝" focused={focused} />,
         }}
       />
       <Tab.Screen

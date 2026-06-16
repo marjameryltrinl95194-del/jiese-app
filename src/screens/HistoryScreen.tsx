@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCheckIn } from '../hooks/useCheckIn';
 import { useStats } from '../hooks/useStats';
@@ -8,6 +8,7 @@ import AppHeader from '../components/AppHeader';
 import MonthNavigator from '../components/MonthNavigator';
 import CalendarGrid from '../components/CalendarGrid';
 import StatsCard from '../components/StatsCard';
+import ProgressChart from '../components/ProgressChart';
 import EmptyState from '../components/EmptyState';
 import { getToday } from '../utils/date';
 import { colors } from '../theme/colors';
@@ -34,21 +35,13 @@ export default function HistoryScreen() {
   }, [checkIns, year, month]);
 
   const handlePrev = () => {
-    if (month === 1) {
-      setYear(year - 1);
-      setMonth(12);
-    } else {
-      setMonth(month - 1);
-    }
+    if (month === 1) { setYear(year - 1); setMonth(12); }
+    else setMonth(month - 1);
   };
 
   const handleNext = () => {
-    if (month === 12) {
-      setYear(year + 1);
-      setMonth(1);
-    } else {
-      setMonth(month + 1);
-    }
+    if (month === 12) { setYear(year + 1); setMonth(1); }
+    else setMonth(month + 1);
   };
 
   if (checkIns.length === 0) {
@@ -68,13 +61,9 @@ export default function HistoryScreen() {
       <AppHeader />
 
       <MonthNavigator
-        year={year}
-        month={month}
-        lang={language}
-        onPrev={handlePrev}
-        onNext={handleNext}
-        canGoNext={canGoNext}
-        canGoPrev={canGoPrev}
+        year={year} month={month} lang={language}
+        onPrev={handlePrev} onNext={handleNext}
+        canGoNext={canGoNext} canGoPrev={canGoPrev}
       />
 
       <CalendarGrid year={year} month={month} checkIns={checkIns} />
@@ -84,21 +73,15 @@ export default function HistoryScreen() {
         <StatsCard value={currentStreak} label={t('currentStreak')} />
         <StatsCard value={longestStreak} label={t('longestStreak')} />
       </View>
+
+      {/* Progress Chart */}
+      <ProgressChart checkIns={checkIns} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    paddingBottom: spacing.xxl,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    paddingHorizontal: spacing.sm,
-    marginTop: spacing.lg,
-  },
+  container: { flex: 1, backgroundColor: colors.background },
+  content: { paddingBottom: spacing.xxl },
+  statsRow: { flexDirection: 'row', paddingHorizontal: spacing.sm, marginTop: spacing.lg, marginBottom: spacing.md },
 });
