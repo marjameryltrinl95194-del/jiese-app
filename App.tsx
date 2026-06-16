@@ -1,20 +1,20 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LanguageProvider, useLanguage } from './src/i18n/LanguageContext';
+import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 import HomeScreen from './src/screens/HomeScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
 import JournalScreen from './src/screens/JournalScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
-import { colors } from './src/theme/colors';
 
 const Tab = createBottomTabNavigator();
 
-function TabIcon({ label, focused }: { label: string; focused: boolean }) {
+function TabIcon({ label, focused, color }: { label: string; focused: boolean; color: string }) {
   return (
-    <Text style={[styles.tabIcon, { color: focused ? colors.tabActive : colors.tabInactive }]}>
+    <Text style={[styles.tabIcon, { color }]}>
       {label}
     </Text>
   );
@@ -22,6 +22,7 @@ function TabIcon({ label, focused }: { label: string; focused: boolean }) {
 
 function TabNavigator() {
   const { t } = useLanguage();
+  const { colors } = useTheme();
 
   return (
     <Tab.Navigator
@@ -29,7 +30,14 @@ function TabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: colors.tabActive,
         tabBarInactiveTintColor: colors.tabInactive,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: {
+          backgroundColor: colors.tabBarBg,
+          borderTopColor: colors.border,
+          borderTopWidth: 1,
+          paddingBottom: 4,
+          paddingTop: 4,
+          height: 56,
+        },
         tabBarLabelStyle: styles.tabLabel,
       }}
     >
@@ -38,7 +46,7 @@ function TabNavigator() {
         component={HomeScreen}
         options={{
           tabBarLabel: t('tabHome'),
-          tabBarIcon: ({ focused }) => <TabIcon label="🏠" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon label="🏠" focused={focused} color={color} />,
         }}
       />
       <Tab.Screen
@@ -46,7 +54,7 @@ function TabNavigator() {
         component={JournalScreen}
         options={{
           tabBarLabel: t('tabJournal'),
-          tabBarIcon: ({ focused }) => <TabIcon label="📝" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon label="📝" focused={focused} color={color} />,
         }}
       />
       <Tab.Screen
@@ -54,7 +62,7 @@ function TabNavigator() {
         component={HistoryScreen}
         options={{
           tabBarLabel: t('tabHistory'),
-          tabBarIcon: ({ focused }) => <TabIcon label="📅" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon label="📅" focused={focused} color={color} />,
         }}
       />
       <Tab.Screen
@@ -62,10 +70,31 @@ function TabNavigator() {
         component={SettingsScreen}
         options={{
           tabBarLabel: t('tabSettings'),
-          tabBarIcon: ({ focused }) => <TabIcon label="⚙️" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon label="⚙️" focused={focused} color={color} />,
         }}
       />
     </Tab.Navigator>
+  );
+}
+
+function AppContent() {
+  const { mode, colors } = useTheme();
+  const navTheme = mode === 'dark' ? DarkTheme : DefaultTheme;
+
+  return (
+    <NavigationContainer
+      theme={{
+        ...navTheme,
+        colors: {
+          ...navTheme.colors,
+          background: colors.background,
+          card: colors.surface,
+          text: colors.textPrimary,
+        },
+      }}
+    >
+      <TabNavigator />
+    </NavigationContainer>
   );
 }
 
@@ -73,23 +102,15 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <LanguageProvider>
-        <NavigationContainer>
-          <TabNavigator />
-        </NavigationContainer>
+        <ThemeProvider>
+          <AppContent />
+        </ThemeProvider>
       </LanguageProvider>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: colors.tabBarBg,
-    borderTopColor: colors.border,
-    borderTopWidth: 1,
-    paddingBottom: 4,
-    paddingTop: 4,
-    height: 56,
-  },
   tabLabel: {
     fontSize: 11,
     fontWeight: '500',

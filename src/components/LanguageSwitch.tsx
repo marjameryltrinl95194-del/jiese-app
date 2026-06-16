@@ -1,28 +1,28 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { Language } from '../i18n/types';
 import { useLanguage } from '../i18n/LanguageContext';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
 import { spacing } from '../theme/spacing';
 
 export default function LanguageSwitch() {
   const { language, setLanguage, t } = useLanguage();
+  const { colors } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.border }]}>
       <TouchableOpacity
-        style={[styles.segment, language === 'zh' && styles.active]}
+        style={[styles.segment, language === 'zh' && { backgroundColor: colors.primary }]}
         onPress={() => setLanguage('zh')}
       >
-        <Text style={[styles.text, language === 'zh' && styles.activeText]}>
+        <Text style={[styles.text, { color: language === 'zh' ? '#fff' : colors.textSecondary }]}>
           {t('languageChinese')}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.segment, language === 'en' && styles.active]}
+        style={[styles.segment, language === 'en' && { backgroundColor: colors.primary }]}
         onPress={() => setLanguage('en')}
       >
-        <Text style={[styles.text, language === 'en' && styles.activeText]}>
+        <Text style={[styles.text, { color: language === 'en' ? '#fff' : colors.textSecondary }]}>
           {t('languageEnglish')}
         </Text>
       </TouchableOpacity>
@@ -31,28 +31,7 @@ export default function LanguageSwitch() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    backgroundColor: colors.border,
-    borderRadius: 10,
-    padding: 2,
-  },
-  segment: {
-    flex: 1,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  active: {
-    backgroundColor: colors.primary,
-  },
-  text: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: colors.textSecondary,
-  },
-  activeText: {
-    color: '#fff',
-  },
+  container: { flexDirection: 'row', borderRadius: 10, padding: 2 },
+  segment: { flex: 1, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, borderRadius: 8, alignItems: 'center' },
+  text: { fontSize: 15, fontWeight: '500' },
 });
